@@ -1,0 +1,42 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Check for Java
+  command: java -version
+  register: java_version
+  ignore_errors: yes
+  changed_when: false
+
+- name: Display Java Version
+  debug:
+    var: java_version.stdout_lines
+  when: java_version.rc == 0
+
+- name: Fail if Java is not installed
+  fail:
+    msg: "Java is not installed on the target system! Please install Java before proceeding!"
+  when: java_version.rc != 0
+
+- name: Install dependencies
+  apt:
+    name: 
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg2
+      - software-properties-common
+
+- name: Download Jenkins package
+  get_url:
+    url: https://mirrors.jenkins.io/debian/jenkins_{{ jenkins_version }}_all.deb
+    dest: /tmp/jenkins_{{ jenkins_version }}_all.deb
+    mode: 0644
+
+
+- name: Install Jenkins
+  apt: 
+    deb: /tmp/jenkins_{{ jenkins_version }}_all.deb
+    state: present
+  notify: Start Jenkins

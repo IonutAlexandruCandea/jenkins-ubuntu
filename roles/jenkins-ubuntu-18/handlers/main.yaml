@@ -1,0 +1,10 @@
+---
+- name: Update apt cache
+  apt: 
+    update_cache: yes
+
+- name: Start Jenkins
+  systemd:
+    name: jenkins
+    state: started
+    enabled: yes
