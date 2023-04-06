@@ -1,9 +1,9 @@
 ---
 - name: Install Jenkins on Ubuntu 18
-  hosts: 127.0.0.1
+  # hosts: 127.0.0.1
   become: true
   roles:
     - jenkins-ubuntu-18-uninstall
-  vars:
-    ansible_host: 127.0.0.1
-    ansible_user: ionut-alexandru
+  # vars:
+  #   ansible_host: 127.0.0.1
+  #   ansible_user: ionut-alexandru
