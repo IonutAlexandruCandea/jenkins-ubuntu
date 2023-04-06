@@ -6,7 +6,7 @@
 - name: Check for Java
   command: java -version
   register: java_version
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: false
 
 - name: Display Java Version
@@ -40,3 +40,8 @@
     deb: /tmp/jenkins_{{ jenkins_version }}_all.deb
     state: present
   notify: Start Jenkins
+
+- name: Clean up
+  file:
+    path: /tmp/jenkins_{{ jenkins_version }}_all.deb
+    state: absent

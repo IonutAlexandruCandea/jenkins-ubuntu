@@ -1,0 +1,10 @@
+---
+- name: Stop Jenkins service
+  systemd:
+    name: jenkins
+    state: stopped
+
+- name: Remove Jenkins package
+  apt:
+    name: jenkins
+    state: absent
