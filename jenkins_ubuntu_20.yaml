@@ -1,0 +1,13 @@
+- name: Install Jenkins on Ubuntu 20
+  hosts: 127.0.0.1
+  become: true
+  roles:
+    - jenkins-ubuntu-20
+  vars:
+    ansible_host: 127.0.0.1
+    ansible_user: ionut-alexandru
+    jenkins_version: "2.399"
+    admin_username: admin
+    admin_password: admin
+    jenkins_home: /var/lib # !!not the same with jenkins installation location
+    jenkins_port: 8081

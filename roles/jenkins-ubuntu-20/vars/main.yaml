@@ -1,0 +1,9 @@
+---
+temp_dir: /tmp
+templates_dir: templates
+jenkins_download_url: "https://mirrors.jenkins.io/debian/jenkins_{{ jenkins_version }}_all.deb"
+jenkins_init_groovy_dir: /var/lib/jenkins/init.groovy.d
+disable_setup_wizare_template: 01_disable_setup_wizard.groovy
+change_admin_credentials_template: 02_change_admin_password.groovy
+jenkins_config_template: 03_jenkins.j2
+jenkins_config_file: /etc/default/jenkins

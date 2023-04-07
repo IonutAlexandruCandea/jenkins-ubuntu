@@ -1,0 +1,40 @@
+- name: Stop Jenkins service
+  systemd:
+    name: jenkins
+    state: stopped
+
+- name: Disable Jenkins service
+  systemd: 
+    name: jenkins
+    enabled: no
+
+- name: Remove Jenkins package
+  apt:
+    name: jenkins
+    state: absent
+
+- name: Purge Jenkins files and directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/systemd/system/jenkins.service
+    - /lib/systemd/system/jenkins.service
+    - /etc/init.d/jenkins
+    - /var/lib/jenkins
+    - /etc/default/jenkins
+    - /var/log/jenkins
+
+- name: Remove Jenkins user
+  ansible.builtin.user:
+    name: jenkins
+    state: absent
+    remove: yes
+
+- name: Remove Jenkins group
+  ansible.builtin.group:
+    name: jenkins
+    state: absent
+
+- name: Reload systemd configuration
+  command: systemctl daemon-reload

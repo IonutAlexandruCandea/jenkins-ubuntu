@@ -1,0 +1,93 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Check for Java
+  command: java -version
+  register: java_version
+  ignore_errors: true
+  changed_when: false
+
+- name: Display Java Version
+  debug:
+    var: java_version.stdout_lines
+  when: java_version.rc == 0
+
+- name: Fail if Java is not installed
+  fail:
+    msg: "Java is not installed on the target system! Please install Java before proceeding!"
+  when: java_version.rc != 0
+
+- name: Install dependencies
+  apt:
+    name: 
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg2
+      - software-properties-common
+
+- name: Download Jenkins package 
+  shell: wget  {{ jenkins_download_url }} -P {{ temp_dir }}
+
+- name: Add jenkins user
+  ansible.builtin.user:
+    name: jenkins
+    state: present
+
+- name: Add jenkins group
+  ansible.builtin.group:
+    name: jenkins
+    state: present
+
+- name: Ensure {{ jenkins_init_groovy_dir }} directory exists
+  ansible.builtin.file:
+    path: "{{ jenkins_init_groovy_dir }}"
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: '0755'
+
+- name: Generate {{ disable_setup_wizare_template }} template
+  ansible.builtin.copy:
+    src: "{{ templates_dir }}/{{ disable_setup_wizare_template }}"
+    dest: "{{ jenkins_init_groovy_dir }}/{{ disable_setup_wizare_template }}"
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+
+- name: Generate {{ change_admin_credentials_template }} template
+  template:
+    src: "{{ templates_dir }}/{{ change_admin_credentials_template }}.j2"
+    dest: "{{ jenkins_init_groovy_dir }}/{{ change_admin_credentials_template }}"
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+
+- name: Generate {{ jenkins_config_file }}
+  template: 
+    src: "{{ templates_dir }}/{{ jenkins_config_template }}"
+    dest: "{{ jenkins_config_file }}"
+    owner: root
+    group: root
+
+- name: Install Jenkins {{ jenkins_version }}
+  apt: 
+    deb: "{{temp_dir}}/jenkins_{{ jenkins_version }}_all.deb"
+    state: present
+  notify: Start Jenkins
+
+- name: Wait for Jenkins to start
+  ansible.builtin.pause:
+    seconds: 60
+
+- name: Cleanup {{ jenkins_init_groovy_dir }}
+  file: 
+    path: "{{ jenkins_init_groovy_dir }}"
+    state: absent
+
+- name: Clean up
+  file:
+    path: /tmp/jenkins_{{ jenkins_version }}_all.deb
+    state: absent
