@@ -28,11 +28,8 @@
       - gnupg2
       - software-properties-common
 
-- name: Download Jenkins package
-  get_url:
-    url: https://mirrors.jenkins.io/debian/jenkins_{{ jenkins_version }}_all.deb
-    dest: /tmp/jenkins_{{ jenkins_version }}_all.deb
-    mode: 0644
+- name: Download Jenkins package 
+  shell: wget https://mirrors.jenkins.io/debian/jenkins_{{ jenkins_version }}_all.deb -P /tmp/
 
 
 - name: Install Jenkins
