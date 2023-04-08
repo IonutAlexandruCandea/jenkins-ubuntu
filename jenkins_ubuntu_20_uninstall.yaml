@@ -1,5 +1,5 @@
 ---
-- name: Install Jenkins on Ubuntu 20
+- name: Uninstall Jenkins on Ubuntu 20
   hosts: 127.0.0.1
   become: true
   roles:

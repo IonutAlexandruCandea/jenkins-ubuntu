@@ -78,7 +78,13 @@
     state: present
   notify: Start Jenkins
 
-- name: Wait for Jenkins to start
+- name: Setup Jenkins
+  service:
+    name: jenkins
+    state: restarted
+    enabled: yes
+
+- name: Wait for Jenkins finish setup
   ansible.builtin.pause:
     seconds: 60
 
