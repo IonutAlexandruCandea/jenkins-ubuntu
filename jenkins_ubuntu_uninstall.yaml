@@ -1,6 +1,7 @@
 ---
 - name: Uninstall Jenkins on Ubuntu 20
-  hosts: 127.0.0.1
+  # hosts: 127.0.0.1
+  hosts: all
   become: true
   roles:
     - jenkins-ubuntu-20-uninstall
